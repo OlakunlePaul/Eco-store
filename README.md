@@ -1,282 +1,335 @@
-# 🌱 Eco Store - E-Commerce Platform
+# 🏡 Cozy Corner - E-Commerce Platform
 
-A complete, production-ready e-commerce store built with React, Firebase, and Stripe. Features user authentication, product management, shopping cart, and secure payment processing.
+A modern, production-ready e-commerce store with a warm, inviting design. Built with React, Firebase, and Stripe.
 
-## 🚀 Features
+![Status](https://img.shields.io/badge/status-ready-success)
+![React](https://img.shields.io/badge/React-18.2.0-blue)
+![Firebase](https://img.shields.io/badge/Firebase-10.7.1-orange)
+![Stripe](https://img.shields.io/badge/Stripe-integrated-blueviolet)
 
-- **Authentication**: Email/password and Google OAuth login
-- **Product Management**: Browse, search, and filter products
-- **Shopping Cart**: Add, remove, and update cart items with Firestore persistence
-- **Checkout**: Secure payment processing with Stripe Checkout
-- **Order History**: View past orders
-- **Responsive Design**: Mobile-first design with TailwindCSS
+---
 
-## 📋 Prerequisites
+## ✨ Features
 
-- Node.js (v18 or higher)
-- npm or yarn
-- Firebase account
-- Stripe account
+- 🏠 **Warm, Cozy Design** - Feels like shopping from home
+- 🔐 **Authentication** - Email/password + Google OAuth
+- 🛒 **Smart Cart** - Persistent shopping cart with real-time updates
+- 💳 **Secure Payments** - Stripe Checkout integration
+- 📦 **Order Tracking** - Complete order history
+- 📱 **Responsive** - Beautiful on all devices
+- 🚀 **Demo Mode** - Works without any configuration!
 
-## 🛠️ Installation
+---
 
-### 1. Clone the repository
-
-```bash
-git clone <your-repo-url>
-cd Eco-store
-```
-
-### 2. Install Frontend Dependencies
+## 🚀 Quick Start (30 seconds)
 
 ```bash
+# 1. Install dependencies
 npm install
+
+# 2. Start the app
+npm run dev
 ```
 
-### 3. Install Backend Dependencies
+**That's it!** Open http://localhost:3000 and start shopping! 🎉
 
-**Option A: Firebase Functions (Recommended)**
+The app runs in demo mode with sample products. No configuration needed!
+
+---
+
+## 📚 Table of Contents
+
+- [Quick Start](#-quick-start-30-seconds)
+- [Features](#-features)
+- [Tech Stack](#-tech-stack)
+- [Project Structure](#-project-structure)
+- [Configuration](#-configuration-optional)
+- [Development](#-development)
+- [Deployment](#-deployment)
+- [Documentation](#-documentation)
+- [Contributing](#-contributing)
+
+---
+
+## 🛠️ Tech Stack
+
+### Frontend
+- **React 18** - UI library
+- **Vite** - Build tool
+- **React Router** - Navigation
+- **TailwindCSS** - Styling
+- **Context API** - State management
+
+### Backend
+- **Firebase Auth** - User authentication
+- **Firestore** - Database
+- **Stripe** - Payment processing
+- **Express** - API server (optional)
+- **Docker** - Containerization
+
+### Design
+- **Playfair Display** - Elegant serif font
+- **Inter** - Clean sans-serif
+- **Custom Color Palette** - Warm, earthy tones
+
+---
+
+## 📁 Project Structure
+
+```
+Cozy-Corner/
+├── src/
+│   ├── components/       # Reusable UI components
+│   ├── pages/           # Page components
+│   ├── context/         # React Context providers
+│   ├── api/             # API utilities
+│   ├── mockData.js      # Demo mode data
+│   └── firebase.js      # Firebase configuration
+├── server/              # Express backend
+├── functions/           # Firebase Cloud Functions
+├── docs/                # Documentation
+├── scripts/             # Utility scripts
+└── public/              # Static assets
+```
+
+See [docs/PROJECT_STRUCTURE.md](docs/PROJECT_STRUCTURE.md) for detailed structure.
+
+---
+
+## ⚙️ Configuration (Optional)
+
+The app works out-of-the-box in demo mode. Configure for production features:
+
+### 1. Firebase Setup
+
+Create a Firebase project at [console.firebase.google.com](https://console.firebase.google.com/)
 
 ```bash
-cd functions
-npm install
-cd ..
-```
+# Create .env file
+cp .env.example .env
 
-**Option B: Express Server**
-
-```bash
-cd server
-npm install
-cd ..
-```
-
-### 4. Configure Environment Variables
-
-Create a `.env.local` file in the root directory:
-
-```bash
-cp .env.local.example .env.local
-```
-
-Fill in your Firebase and Stripe credentials:
-
-```env
-# Firebase Configuration
-VITE_FIREBASE_API_KEY=your_api_key_here
-VITE_FIREBASE_AUTH_DOMAIN=your_project_id.firebaseapp.com
+# Add your Firebase config
+VITE_FIREBASE_API_KEY=your_api_key
 VITE_FIREBASE_PROJECT_ID=your_project_id
-VITE_FIREBASE_STORAGE_BUCKET=your_project_id.appspot.com
-VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
-VITE_FIREBASE_APP_ID=your_app_id
-
-# Stripe Configuration
-VITE_STRIPE_PUBLISHABLE_KEY=pk_test_your_publishable_key_here
-VITE_STRIPE_API_URL=http://localhost:5001/your-project-id/us-central1/createCheckoutSession
+# ... other Firebase values
 ```
 
-### 5. Configure Firebase
+### 2. Stripe Setup
 
-1. Create a Firebase project at [Firebase Console](https://console.firebase.google.com/)
-2. Enable Authentication (Email/Password and Google)
-3. Create a Firestore database
-4. Deploy Firestore security rules:
+Get API keys from [dashboard.stripe.com](https://dashboard.stripe.com/)
 
 ```bash
-firebase deploy --only firestore:rules
+# Add to .env
+VITE_STRIPE_PUBLISHABLE_KEY=pk_test_your_key
+STRIPE_SECRET_KEY=sk_test_your_key
 ```
 
-### 6. Configure Stripe
+### 3. Start Backend
 
-1. Create a Stripe account at [Stripe Dashboard](https://dashboard.stripe.com/)
-2. Get your API keys (Test mode for development)
-3. Set up webhook endpoint (for production)
-
-**For Firebase Functions:**
-
+**Option A: Docker (Recommended)**
 ```bash
-firebase functions:config:set stripe.secret_key="sk_test_your_secret_key"
-firebase functions:config:set stripe.webhook_secret="whsec_your_webhook_secret"
+docker-compose up -d
 ```
 
-**For Express Server:**
-
-Add to your server environment:
-
-```env
-STRIPE_SECRET_KEY=sk_test_your_secret_key
-STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret
-```
-
-## 🗄️ Firestore Database Structure
-
-### Collections
-
-**products**
-```
-{
-  name: string,
-  description: string,
-  price: number,
-  originalPrice?: number,
-  image: string,
-  category: string,
-  stock?: number
-}
-```
-
-**users**
-```
-{
-  email: string,
-  displayName: string,
-  createdAt: timestamp,
-  photoURL: string
-}
-```
-
-**carts**
-```
-{
-  items: array,
-  updatedAt: timestamp
-}
-```
-
-**orders**
-```
-{
-  userId: string,
-  email: string,
-  items: array,
-  total: number,
-  status: string,
-  stripeSessionId: string,
-  createdAt: timestamp
-}
-```
-
-## 🚀 Running the Application
-
-### Development Mode
-
-**Frontend:**
-```bash
-npm run dev
-```
-
-The app will be available at `http://localhost:3000`
-
-**Backend (Firebase Functions):**
-```bash
-cd functions
-npm run serve
-```
-
-**Backend (Express Server):**
+**Option B: Node.js**
 ```bash
 cd server
+npm install
 npm start
-# or for development with auto-reload
-npm run dev
 ```
 
-### Production Build
+**Option C: Firebase Functions**
+```bash
+cd functions
+npm install
+firebase deploy --only functions
+```
+
+See [docs/QUICK_START.md](docs/QUICK_START.md) for detailed setup.
+
+---
+
+## 💻 Development
+
+### Available Scripts
+
+```bash
+# Development
+npm run dev              # Start dev server
+npm test                 # Run tests
+npm run build            # Production build
+npm run preview          # Preview build
+
+# Docker
+docker-compose up -d     # Start backend
+docker-compose down      # Stop backend
+docker-compose logs -f   # View logs
+
+# Firebase
+firebase deploy          # Deploy all
+firebase serve           # Local emulator
+```
+
+### Adding Products
+
+**Demo Mode:**
+Products are loaded from `src/mockData.js`
+
+**Production:**
+```bash
+# Seed sample products
+node scripts/seed-products.js
+```
+
+Or add manually via Firebase Console.
+
+---
+
+## 🌐 Deployment
+
+### Frontend (Vercel/Netlify)
 
 ```bash
 npm run build
-npm run preview
+# Deploy the 'dist' folder
 ```
+
+### Backend
+
+**Docker:**
+```bash
+docker build -t cozy-corner-backend .
+docker push your-registry/cozy-corner-backend
+```
+
+**Firebase:**
+```bash
+firebase deploy --only functions
+```
+
+---
+
+## 📖 Documentation
+
+| Document | Description |
+|----------|-------------|
+| [Quick Start](docs/QUICK_START.md) | Detailed setup guide |
+| [Installation](docs/INSTALLATION_COMPLETE.md) | What's included |
+| [Project Structure](docs/PROJECT_STRUCTURE.md) | File organization |
+| [Deployment](docs/DEPLOYMENT_SUMMARY.md) | Deploy to production |
+| [Webhooks](docs/WEBHOOK_SETUP.md) | Stripe webhook config |
+| [Demo Mode](docs/DEMO_MODE.md) | How demo mode works |
+
+---
+
+## 🎨 Design System
+
+### Color Palette
+
+```css
+/* Warm Tones */
+--warm-500: #FFB784
+--warm-600: #FF9F5C
+
+/* Earth Tones */
+--earth-500: #B9AA91
+--earth-600: #9A8B73
+
+/* Sage Greens */
+--sage-500: #9BB99B
+--sage-600: #7FA37F
+```
+
+### Typography
+
+- **Headings:** Playfair Display (serif)
+- **Body:** Inter (sans-serif)
+
+---
 
 ## 🧪 Testing
 
-Run tests with:
-
 ```bash
+# Run all tests
 npm test
+
+# Run specific test
+npm test ProductCard
 ```
 
-## 📝 Adding Sample Products
+Tests use Vitest + React Testing Library.
 
-You can add sample products to Firestore manually or use the Firebase Console. Here's an example product structure:
-
-```javascript
-{
-  name: "Organic Cotton T-Shirt",
-  description: "100% organic cotton, sustainably sourced",
-  price: 29.99,
-  originalPrice: 39.99,
-  image: "https://example.com/image.jpg",
-  category: "clothing",
-  stock: 50
-}
-```
-
-## 🔒 Security Rules
-
-The Firestore security rules are configured in `firestore.rules`:
-
-- Products: Read-only for authenticated users
-- Users: Users can only access their own document
-- Carts: Users can only access their own cart
-- Orders: Users can only read their own orders
-
-Deploy rules with:
-```bash
-firebase deploy --only firestore:rules
-```
-
-## 🎨 Customization
-
-- **Styling**: Modify `src/index.css` and Tailwind classes in components
-- **Theme**: Update colors in `tailwind.config.js`
-- **Components**: All components are in `src/components/`
-- **Pages**: All pages are in `src/pages/`
-
-## 📦 Project Structure
-
-```
-Eco-store/
-├── src/
-│   ├── components/       # Reusable components
-│   ├── context/          # React Context providers
-│   ├── pages/           # Page components
-│   ├── api/             # API utilities
-│   ├── firebase.js      # Firebase configuration
-│   ├── App.jsx          # Main app component
-│   └── main.jsx         # Entry point
-├── functions/           # Firebase Cloud Functions
-├── server/              # Express server (alternative)
-├── public/              # Static assets
-└── package.json         # Dependencies
-```
+---
 
 ## 🐛 Troubleshooting
 
-### Firebase Authentication Issues
-- Ensure Authentication is enabled in Firebase Console
-- Check that Email/Password and Google providers are enabled
-- Verify environment variables are correct
+### Port Already in Use
 
-### Stripe Checkout Issues
-- Verify Stripe API keys are correct
-- Check CORS settings on backend
-- Ensure webhook endpoint is configured (for production)
+```bash
+# Kill process on port 3000
+npx kill-port 3000
+```
 
-### Firestore Permission Errors
-- Deploy security rules: `firebase deploy --only firestore:rules`
-- Check user authentication status
-- Verify rules match your data structure
+### Tailwind Colors Not Working
 
-## 📄 License
+```bash
+# Restart dev server
+# Press Ctrl+C, then:
+npm run dev
+```
 
-MIT License
+### Firebase Not Connecting
+
+- Check `.env` file exists
+- Verify API keys are correct
+- Restart dev server
+
+See [docs/QUICK_START.md](docs/QUICK_START.md) for more troubleshooting.
+
+---
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Contributions welcome! Please follow these steps:
 
-## 📧 Support
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-For issues and questions, please open an issue on GitHub.
+---
 
+## 📝 License
+
+MIT License - see [LICENSE](LICENSE) file for details.
+
+---
+
+## 👨‍💻 Authors
+
+Created with ❤️ for sustainable, cozy shopping experiences.
+
+---
+
+## 🙏 Acknowledgments
+
+- React Team for the amazing framework
+- Firebase for backend infrastructure
+- Stripe for secure payments
+- TailwindCSS for beautiful styling
+- Unsplash for product images
+
+---
+
+## 📞 Support
+
+- 📖 [Documentation](docs/)
+- 🐛 [Issue Tracker](../../issues)
+- 💬 [Discussions](../../discussions)
+
+---
+
+**Built with React • Firebase • Stripe • TailwindCSS**
+
+*Making e-commerce feel like home* 🏡✨

@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { doc, getDoc } from 'firebase/firestore';
-import { db } from '../firebase';
+import { db, isFirebaseConfigured } from '../firebase';
+import { mockProducts } from '../mockData';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 
@@ -20,16 +21,40 @@ const Product = () => {
   const fetchProduct = async () => {
     try {
       setLoading(true);
+      
+      if (!isFirebaseConfigured || !db) {
+        // Demo mode - use mock data
+        const mockProduct = mockProducts.find(p => p.id === id);
+        if (mockProduct) {
+          setProduct(mockProduct);
+        } else {
+          console.error('Product not found in mock data');
+        }
+        setLoading(false);
+        return;
+      }
+
       const productRef = doc(db, 'products', id);
       const productSnap = await getDoc(productRef);
       
       if (productSnap.exists()) {
         setProduct({ id: productSnap.id, ...productSnap.data() });
       } else {
-        console.error('Product not found');
+        // Try to find in mock data as fallback
+        const mockProduct = mockProducts.find(p => p.id === id);
+        if (mockProduct) {
+          setProduct(mockProduct);
+        } else {
+          console.error('Product not found');
+        }
       }
     } catch (error) {
       console.error('Error fetching product:', error);
+      // Fallback to mock data
+      const mockProduct = mockProducts.find(p => p.id === id);
+      if (mockProduct) {
+        setProduct(mockProduct);
+      }
     } finally {
       setLoading(false);
     }

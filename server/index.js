@@ -4,7 +4,11 @@
 
 const express = require('express');
 const cors = require('cors');
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+
+// Initialize Stripe only if configured
+const stripeKey = process.env.STRIPE_SECRET_KEY;
+const stripe = stripeKey && stripeKey !== 'sk_test_placeholder' ? require('stripe')(stripeKey) : null;
+
 const admin = require('firebase-admin');
 
 const app = express();
@@ -21,12 +25,27 @@ if (process.env.FIREBASE_SERVICE_ACCOUNT) {
 app.use(cors());
 app.use(express.json());
 
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.status(200).json({ 
+    status: 'ok',
+    stripe: !!stripe,
+    firebase: admin.apps.length > 0
+  });
+});
+
 /**
  * POST /create-checkout-session
  * Creates a Stripe Checkout Session
  */
 app.post('/create-checkout-session', async (req, res) => {
   try {
+    if (!stripe) {
+      return res.status(503).json({ 
+        error: 'Stripe is not configured. Please set STRIPE_SECRET_KEY environment variable.' 
+      });
+    }
+
     const { items, userId } = req.body;
 
     if (!items || !Array.isArray(items) || items.length === 0) {

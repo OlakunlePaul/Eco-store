@@ -2,14 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
+  font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.6;
   font-weight: 400;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  color-scheme: light;
+  color: #3c352b;
+  background: linear-gradient(135deg, #FFF9F5 0%, #F8F7F4 100%);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -20,27 +22,88 @@
 body {
   margin: 0;
   min-height: 100vh;
+  background: linear-gradient(135deg, #FFF9F5 0%, #F8F7F4 100%);
 }
 
 #root {
   min-height: 100vh;
 }
 
+@layer base {
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Playfair Display', Georgia, serif;
+  }
+}
+
 @layer components {
   .btn-primary {
-    @apply bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200;
+    @apply bg-gradient-to-r from-warm-600 to-warm-500 hover:from-warm-700 hover:to-warm-600 text-white font-semibold py-3 px-6 rounded-2xl shadow-warm transition-all duration-300 transform hover:scale-105 hover:shadow-lg;
   }
   
   .btn-secondary {
-    @apply bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg transition-colors duration-200;
+    @apply bg-earth-100 hover:bg-earth-200 text-earth-800 font-semibold py-3 px-6 rounded-2xl transition-all duration-300 transform hover:scale-105;
   }
   
   .input-field {
-    @apply w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500;
+    @apply w-full px-4 py-3 border-2 border-earth-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-warm-400 focus:border-transparent bg-white transition-all duration-200;
   }
   
   .card {
-    @apply bg-white rounded-lg shadow-md overflow-hidden transition-shadow duration-200 hover:shadow-lg;
+    @apply bg-white rounded-3xl shadow-soft overflow-hidden transition-all duration-300 hover:shadow-cozy transform hover:-translate-y-1;
   }
+
+  .badge {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-sage-100 text-sage-800 border border-sage-200;
+  }
+
+  .section-container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8;
+  }
+
+  .page-title {
+    @apply text-4xl md:text-5xl font-bold text-earth-900 mb-8 font-display;
+  }
+
+  .card-hover {
+    @apply transition-all duration-300 hover:shadow-warm hover:-translate-y-2;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F8F7F4;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #C7BBA7;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #B9AA91;
+}
+
+/* Smooth animations */
+* {
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Decorative elements */
+.decorative-circle {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.05;
+  pointer-events: none;
+}
+
+/* Pattern background */
+.pattern-bg {
+  background-image: 
+    radial-gradient(circle at 20% 50%, rgba(255, 183, 132, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(155, 185, 155, 0.05) 0%, transparent 50%);
 }
 

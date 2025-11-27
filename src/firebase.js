@@ -11,13 +11,29 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
+// Check if Firebase is configured
+const isFirebaseConfigured = firebaseConfig.apiKey && firebaseConfig.projectId;
 
-// Initialize Firebase services
-export const auth = getAuth(app);
-export const db = getFirestore(app);
-export const googleProvider = new GoogleAuthProvider();
+// Initialize Firebase only if configured
+let app = null;
+let auth = null;
+let db = null;
+let googleProvider = null;
 
+if (isFirebaseConfigured) {
+  try {
+    app = initializeApp(firebaseConfig);
+    auth = getAuth(app);
+    db = getFirestore(app);
+    googleProvider = new GoogleAuthProvider();
+    console.log('✅ Firebase initialized successfully');
+  } catch (error) {
+    console.warn('⚠️ Firebase initialization failed:', error.message);
+  }
+} else {
+  console.warn('⚠️ Firebase not configured. Running in demo mode. Set up .env.local to enable Firebase features.');
+}
+
+export { auth, db, googleProvider, isFirebaseConfigured };
 export default app;
 

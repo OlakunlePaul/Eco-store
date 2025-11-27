@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
-import { db } from '../firebase';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { db, isFirebaseConfigured } from '../firebase';
 import { useAuth } from './AuthContext';
 
 const CartContext = createContext();
@@ -16,20 +16,42 @@ export const useCart = () => {
 export const CartProvider = ({ children }) => {
   const [cart, setCart] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { user } = useAuth();
+  const { user, demoMode } = useAuth();
 
   // Load cart from Firestore when user logs in
   useEffect(() => {
     if (user) {
-      loadCartFromFirestore();
+      if (demoMode || !isFirebaseConfigured || !db) {
+        // Demo mode - use localStorage
+        loadCartFromLocalStorage();
+      } else {
+        loadCartFromFirestore();
+      }
     } else {
       setCart([]);
       setLoading(false);
     }
-  }, [user]);
+  }, [user, demoMode]);
+
+  const loadCartFromLocalStorage = () => {
+    try {
+      setLoading(true);
+      const savedCart = localStorage.getItem('demo-cart');
+      if (savedCart) {
+        setCart(JSON.parse(savedCart));
+      } else {
+        setCart([]);
+      }
+    } catch (error) {
+      console.error('Error loading cart from localStorage:', error);
+      setCart([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const loadCartFromFirestore = async () => {
-    if (!user) return;
+    if (!user || !db) return;
     
     try {
       setLoading(true);
@@ -43,13 +65,22 @@ export const CartProvider = ({ children }) => {
       }
     } catch (error) {
       console.error('Error loading cart:', error);
+      setCart([]);
     } finally {
       setLoading(false);
     }
   };
 
+  const saveCartToLocalStorage = (cartItems) => {
+    try {
+      localStorage.setItem('demo-cart', JSON.stringify(cartItems));
+    } catch (error) {
+      console.error('Error saving cart to localStorage:', error);
+    }
+  };
+
   const saveCartToFirestore = async (cartItems) => {
-    if (!user) return;
+    if (!user || !db) return;
     
     try {
       const cartRef = doc(db, 'carts', user.uid);
@@ -63,7 +94,11 @@ export const CartProvider = ({ children }) => {
   };
 
   const addToCart = (product) => {
-    if (!user) {
+    if (!isFirebaseConfigured) {
+      alert('Firebase is not configured. Cart data will not be saved.');
+    }
+    
+    if (!user && isFirebaseConfigured) {
       alert('Please login to add items to cart');
       return;
     }
@@ -82,7 +117,11 @@ export const CartProvider = ({ children }) => {
         newCart = [...prevCart, { ...product, quantity: 1 }];
       }
 
-      saveCartToFirestore(newCart);
+      if (demoMode || !isFirebaseConfigured) {
+        saveCartToLocalStorage(newCart);
+      } else {
+        saveCartToFirestore(newCart);
+      }
       return newCart;
     });
   };
@@ -91,7 +130,11 @@ export const CartProvider = ({ children }) => {
     setCart((prevCart) => {
       const newCart = prevCart.filter(item => item.id !== productId);
       if (user) {
-        saveCartToFirestore(newCart);
+        if (demoMode || !isFirebaseConfigured) {
+          saveCartToLocalStorage(newCart);
+        } else {
+          saveCartToFirestore(newCart);
+        }
       }
       return newCart;
     });
@@ -110,7 +153,11 @@ export const CartProvider = ({ children }) => {
           : item
       );
       if (user) {
-        saveCartToFirestore(newCart);
+        if (demoMode || !isFirebaseConfigured) {
+          saveCartToLocalStorage(newCart);
+        } else {
+          saveCartToFirestore(newCart);
+        }
       }
       return newCart;
     });
@@ -119,7 +166,11 @@ export const CartProvider = ({ children }) => {
   const clearCart = () => {
     setCart([]);
     if (user) {
-      saveCartToFirestore([]);
+      if (demoMode || !isFirebaseConfigured) {
+        saveCartToLocalStorage([]);
+      } else {
+        saveCartToFirestore([]);
+      }
     }
   };
 
@@ -144,4 +195,5 @@ export const CartProvider = ({ children }) => {
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 };
+
 

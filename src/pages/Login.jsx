@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { isFirebaseConfigured } from '../firebase';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -39,88 +40,102 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Sign in to your account
-          </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            Or{' '}
-            <Link to="/register" className="font-medium text-green-600 hover:text-green-500">
-              create a new account
-            </Link>
-          </p>
-        </div>
+    <div className="min-h-screen pattern-bg flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full">
+        <div className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-cozy p-8 md:p-10">
+          <div className="text-center mb-8">
+            <span className="text-5xl mb-4 block">🏡</span>
+            <h2 className="text-3xl font-display font-bold text-earth-900 mb-2">
+              Welcome Back Home
+            </h2>
+            <p className="text-earth-600">
+              New here?{' '}
+              <Link to="/register" className="font-semibold text-warm-600 hover:text-warm-700 transition-colors">
+                Create your cozy corner
+              </Link>
+            </p>
+          </div>
 
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          {error && (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-              {error}
+          {!isFirebaseConfigured && (
+            <div className="bg-gradient-to-r from-warm-50 to-sage-50 border-2 border-warm-200 text-earth-700 px-4 py-3 rounded-2xl mb-6">
+              <div className="flex items-center space-x-2">
+                <span className="text-xl">✨</span>
+                <div>
+                  <strong className="text-warm-700">Demo Mode:</strong>
+                  <span className="text-sm ml-2">Just click login to explore!</span>
+                </div>
+              </div>
             </div>
           )}
 
-          <div className="rounded-md shadow-sm -space-y-px">
+          <form className="space-y-5" onSubmit={handleSubmit}>
+            {error && (
+              <div className="bg-warm-50 border-2 border-warm-300 text-warm-800 px-4 py-3 rounded-2xl">
+                {error}
+              </div>
+            )}
+
+            <div className="space-y-4">
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium text-earth-700 mb-2">
+                  📧 Email address
+                </label>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="input-field"
+                  placeholder="your@email.com"
+                />
+              </div>
+              <div>
+                <label htmlFor="password" className="block text-sm font-medium text-earth-700 mb-2">
+                  🔒 Password
+                </label>
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  autoComplete="current-password"
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="input-field"
+                  placeholder="••••••••"
+                />
+              </div>
+            </div>
+
             <div>
-              <label htmlFor="email" className="sr-only">
-                Email address
-              </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="input-field rounded-t-md"
-                placeholder="Email address"
-              />
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full btn-primary py-3 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loading ? 'Signing in...' : 'Sign in to Cozy Corner'}
+              </button>
             </div>
+
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t-2 border-earth-200" />
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-4 bg-white text-earth-500 font-medium">Or continue with</span>
+              </div>
+            </div>
+
             <div>
-              <label htmlFor="password" className="sr-only">
-                Password
-              </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="current-password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="input-field rounded-b-md"
-                placeholder="Password"
-              />
-            </div>
-          </div>
-
-          <div>
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full btn-primary py-3 disabled:bg-gray-400 disabled:cursor-not-allowed"
-            >
-              {loading ? 'Signing in...' : 'Sign in'}
-            </button>
-          </div>
-
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-300" />
-            </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-gray-50 text-gray-500">Or continue with</span>
-            </div>
-          </div>
-
-          <div>
-            <button
-              type="button"
-              onClick={handleGoogleLogin}
-              disabled={loading}
-              className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:bg-gray-100"
-            >
+              <button
+                type="button"
+                onClick={handleGoogleLogin}
+                disabled={loading}
+                className="w-full flex items-center justify-center px-4 py-3 border-2 border-earth-200 rounded-2xl shadow-soft bg-white text-sm font-medium text-earth-700 hover:bg-earth-50 hover:border-warm-300 transition-all disabled:opacity-50"
+              >
               <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
                 <path
                   fill="#4285F4"
@@ -139,10 +154,11 @@ const Login = () => {
                   d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                 />
               </svg>
-              Sign in with Google
-            </button>
-          </div>
-        </form>
+                Sign in with Google
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );
